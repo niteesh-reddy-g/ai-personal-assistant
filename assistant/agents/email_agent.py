@@ -20,7 +20,11 @@ class EmailAgent(BaseAgent):
         self.auto_send = auto_send
 
     async def run(self, task: dict[str, Any], context: dict[str, Any]) -> dict[str, Any]:
+        task = task if isinstance(task, dict) else {"input": task}
         labels = task.get("labels", ["HIGH_PRIORITY", "LOW_PRIORITY", "IGNORE"])
+        if not isinstance(labels, list):
+            labels = ["HIGH_PRIORITY", "LOW_PRIORITY", "IGNORE"]
+
         emails = self.gmail_tool.fetch_inbox(max_results=task.get("max_results", 10))
         results: list[dict[str, Any]] = []
         for email in emails:
