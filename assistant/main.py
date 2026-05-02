@@ -3,6 +3,13 @@ from __future__ import annotations
 import argparse
 import asyncio
 import json
+import sys
+from pathlib import Path
+
+if __package__ in {None, ""}:
+    repo_root = Path(__file__).resolve().parent.parent
+    if str(repo_root) not in sys.path:
+        sys.path.insert(0, str(repo_root))
 
 from assistant.agents.email_agent import EmailAgent
 from assistant.agents.shopping_agent import ShoppingAgent
@@ -39,7 +46,13 @@ async def async_main(instruction: str) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description="Extensible Gemini-powered AI personal assistant")
-    parser.add_argument("instruction", type=str, help='Example: "Check my email and notify important ones"')
+    parser.add_argument(
+        "instruction",
+        type=str,
+        nargs="?",
+        default="Check my email and notify important ones",
+        help='Example: "Check my email and notify important ones"',
+    )
     args = parser.parse_args()
     asyncio.run(async_main(args.instruction))
 
